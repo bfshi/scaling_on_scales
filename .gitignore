@@ -1,0 +1,4 @@
+.idea/
+s2wrapper.egg-info/
+build/
+*pycahce*
