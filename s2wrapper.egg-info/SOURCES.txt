@@ -1,0 +1,11 @@
+LICENSE.md
+README.md
+setup.py
+s2wrapper/__init__.py
+s2wrapper/core.py
+s2wrapper/utils.py
+s2wrapper.egg-info/PKG-INFO
+s2wrapper.egg-info/SOURCES.txt
+s2wrapper.egg-info/dependency_links.txt
+s2wrapper.egg-info/requires.txt
+s2wrapper.egg-info/top_level.txt
