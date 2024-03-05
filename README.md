@@ -27,6 +27,33 @@ from s2wrapper import forward as multiscale_forward
 mutliscale_feature = multiscale_forward(model, x, scales=[1, 2])   # x: 32*3*224*224, feature: 32*196*1536
 ```
 
+## Usage
+
+```python
+s2wrapper.forward(
+    model,
+    input,
+    scales=None,
+    img_sizes=None,
+    max_split_size=None,
+    resize_output_to_idx=0,
+    num_prefix_token=0,
+)
+```
+
+`model`: Your vision model or any function that takes in BxCxHxW image tensor and outputs BxNxC feature tensor.
+
+`input`: Input image tensor with shape BxCxHxW.
+
+`scales`: A list of scales to extract features on. For example, `scales=[1, 2]` will extract feature on 224<sup>2</sup> and 448<sup>2</sup> scales if default size is 224<sup>2</sup>.
+
+`img_sizes`: Alternatively, instead of assigning `scales`, you can assign the image size for each scale. For example, `img_sizes=[224, 448]` will yeild with same results as `scales=[1, 2]` for default size of 224<sup>2</sup>.
+
+`max_split_size`: The maximum size of sub-images splitted from the large image. For each scale, the image will be splitted into `ceil(img_size_that_scale / max_split_size)**2` sub-images. Default is the size of `input`.
+
+`resize_output_to_idx`: Which scale to resize the final feature map to. Default is the first scale in `scales` or `img_sizes`.
+
+`num_prefix_token`: Number of prefix tokens in the feature map. For example, if the feature map returned by `model` contains 1 \[CLS\] token and other spatial tokens, set `num_prefix_token=1`. 
 
 ## Example:  HuggingFace CLIP with S<sup>2</sup>Wrapper
 
