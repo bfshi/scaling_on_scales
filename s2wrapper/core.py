@@ -11,7 +11,7 @@ import torch.nn.functional as F
 from einops import rearrange
 from .utils import split_chessboard, merge_chessboard
 
-def forward(model, input, scales=None, img_size_each_scale=None, max_split_size=None, resize_output_to_idx=0, num_predix_token=0):
+def forward(model, input, scales=None, img_size_each_scale=None, max_split_size=None, resize_output_to_idx=0, num_prefix_token=0):
 
     assert input.dim() == 4, "Input image must be in the shape of BxCxHxW!"
     assert input.shape[2] == input.shape[3], "Currently only support square images!"
@@ -32,9 +32,9 @@ def forward(model, input, scales=None, img_size_each_scale=None, max_split_size=
 
     # run feedforward on each scale
     outs_multiscale = [model(x) for x in input_multiscale]
-    if num_predix_token > 0:
-        outs_prefix_multiscale = [out[:, :num_predix_token] for out in outs_multiscale]
-        outs_multiscale = [out[:, num_predix_token:] for out in outs_multiscale]
+    if num_prefix_token > 0:
+        outs_prefix_multiscale = [out[:, :num_prefix_token] for out in outs_multiscale]
+        outs_multiscale = [out[:, num_prefix_token:] for out in outs_multiscale]
     outs_multiscale = [rearrange(out, 'b (h w) c -> b c h w', h=int(out.shape[1] ** 0.5), w=int(out.shape[1] ** 0.5))
                        for out in outs_multiscale]
 
@@ -47,7 +47,7 @@ def forward(model, input, scales=None, img_size_each_scale=None, max_split_size=
                                    mode='area').to(outs_multiscale[i].dtype)
                      for i in range(len(outs_multiscale))], dim=1)
     out = rearrange(out, 'b c h w -> b (h w) c')
-    if num_predix_token > 0:
+    if num_prefix_token > 0:
         # take the mean of prefix tokens from different splits for each scale
         outs_prefix_multiscale = [torch.stack(out.split(b, dim=0), dim=0).mean(dim=0) for out in outs_prefix_multiscale]
         out_prefix_multiscale = torch.cat(outs_prefix_multiscale, dim=-1)
