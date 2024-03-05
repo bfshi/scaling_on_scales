@@ -30,7 +30,7 @@ mutliscale_feature = multiscale_forward(model, x, scales=[1, 2])   # x: 32*3*224
 
 ## Example:  HuggingFace CLIP with S<sup>2</sup>Wrapper
 
-Regular feature extraction using HuggingFace CLIP vision model (copied from [official example](https://huggingface.co/docs/transformers/model_doc/clip#transformers.CLIPVisionModel.forward.example)):
+Regular feature extraction using HuggingFace CLIP vision model (reference: [official example](https://huggingface.co/docs/transformers/model_doc/clip#transformers.CLIPVisionModel.forward.example)):
 ```python
 from PIL import Image
 import requests
@@ -42,9 +42,32 @@ processor = AutoProcessor.from_pretrained("openai/clip-vit-base-patch32")
 url = "http://images.cocodataset.org/val2017/000000039769.jpg"
 image = Image.open(requests.get(url, stream=True).raw)
 
-inputs = processor(images=image, return_tensors="pt")
+inputs = processor(images=image, return_tensors="pt").pixel_values
 
-outputs = model(**inputs)
-last_hidden_state = outputs.last_hidden_state
-pooled_output = outputs.pooler_output  # pooled CLS states
+# model.forward returns an object that contains "last_hidden_state" which is the feature map we need
+outputs = model(inputs).last_hidden_state
+print(outputs.shape)  # 1*50*768
+```
+
+Making it multi-scale:
+```python
+from PIL import Image
+import requests
+from transformers import AutoProcessor, CLIPVisionModel
+
+model = CLIPVisionModel.from_pretrained("openai/clip-vit-base-patch32")
+processor = AutoProcessor.from_pretrained("openai/clip-vit-base-patch32")
+
+url = "http://images.cocodataset.org/val2017/000000039769.jpg"
+image = Image.open(requests.get(url, stream=True).raw)
+
+inputs = processor(images=image, return_tensors="pt").pixel_values
+
+# wrap the feature extraction process into a single function that takes image tensor as input and outputs feature tensor
+def forward_features(inputs):
+    return model(inputs).last_hidden_state
+
+# extracting features with scales=[1, 2]. Note the output has one [CLS] token so setting num_prefix_token=1.
+outputs = multiscale_forward(forward_feature, inputs, scales=[1, 2], num_prefix_token=1)
+print(outputs.shape)  # 1*50*1536
 ```
