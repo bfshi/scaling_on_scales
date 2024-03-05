@@ -11,21 +11,21 @@ import torch.nn.functional as F
 from einops import rearrange
 from .utils import split_chessboard, merge_chessboard
 
-def forward(model, input, scales=None, img_size_each_scale=None, max_split_size=None, resize_output_to_idx=0, num_prefix_token=0):
+def forward(model, input, scales=None, img_sizes=None, max_split_size=None, resize_output_to_idx=0, num_prefix_token=0):
 
     assert input.dim() == 4, "Input image must be in the shape of BxCxHxW!"
     assert input.shape[2] == input.shape[3], "Currently only support square images!"
     b, c, input_size, _ = input.shape
 
     # image size for each scale
-    assert scales is not None or img_size_each_scale is not None, "Must assign either scales or img_size_each_scale!"
-    img_size_each_scale = img_size_each_scale or [input_size * scale for scale in scales]
+    assert scales is not None or img_sizes is not None, "Must assign either scales or img_sizes!"
+    img_sizes = img_sizes or [input_size * scale for scale in scales]
 
     # prepare multiscale inputs
     max_split_size = max_split_size or input_size   # The maximum size of each split of image. Set as the input size by default
-    num_splits = [math.ceil(size / max_split_size) for size in img_size_each_scale]   # number of splits each scale
+    num_splits = [math.ceil(size / max_split_size) for size in img_sizes]   # number of splits each scale
     input_multiscale = []
-    for size, num_split in zip(img_size_each_scale, num_splits):
+    for size, num_split in zip(img_sizes, num_splits):
         x = F.interpolate(input.to(torch.float32), size=size, mode='bicubic').to(input.dtype)
         x = split_chessboard(x, num_split=num_split)
         input_multiscale.append(x)
