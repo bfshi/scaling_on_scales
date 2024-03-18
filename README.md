@@ -5,14 +5,14 @@ This repo contains the Pytorch implementation of S<sup>2</sup>-Wrapper, a simple
 
 ## Quickstart
 
-**Step 1.** Clone this repo and install `s2wrapper` through pip
+**Step 1.** Clone this repo and install `s2wrapper` through pip.
 
 ```bash
-# go to the directory of this repo, and
+# go to the directory of this repo, and run 
 pip install .
 ```
 
-**Step 2.** Extract multi-scale feature on **any vision model** with **one line of code**
+**Step 2.** Extract multi-scale feature on **any vision model** with **one line of code**.
 
 Assume you have a function (could be `model`, `model.forward`, _etc._) that takes in BxCxHxW images and outputs BxNxC features.
 
@@ -38,6 +38,7 @@ s2wrapper.forward(
     max_split_size=None,
     resize_output_to_idx=0,
     num_prefix_token=0,
+    output_shape='bnc',
 )
 ```
 
@@ -49,11 +50,13 @@ s2wrapper.forward(
 
 `img_sizes`: Alternatively, instead of assigning `scales`, you can assign the image size for each scale. For example, `img_sizes=[224, 448]` will yeild with same results as `scales=[1, 2]` for default size of 224<sup>2</sup>.
 
-`max_split_size`: The maximum size of sub-images splitted from the large image. For each scale, the image will be splitted into `ceil(img_size_that_scale / max_split_size)**2` sub-images. Default is the size of `input`.
+`max_split_size`: The maximum size of sub-images splitted from the large image. For each scale, the image will be splitted into `ceil(img_size_that_scale / max_split_size)**2` sub-images. If `None`, set by default as the size of `input`.
 
 `resize_output_to_idx`: Which scale to resize the final feature map to. Default is the first scale in `scales` or `img_sizes`.
 
-`num_prefix_token`: Number of prefix tokens in the feature map. For example, if the feature map returned by `model` contains 1 \[CLS\] token and other spatial tokens, set `num_prefix_token=1`. 
+`num_prefix_token`: Number of prefix tokens in the feature map. For example, if the feature map returned by `model` contains 1 \[CLS\] token and other spatial tokens, set `num_prefix_token=1`. Default is 0.
+
+`output_shape`: Shape of the output features. Need to be either `bnc` (e.g., ViT) or `bchw` (e.g., ConvNet). Default is `bnc`.
 
 ## Example:  HuggingFace CLIP with S<sup>2</sup>Wrapper
 

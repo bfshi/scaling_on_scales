@@ -11,14 +11,18 @@ import torch.nn.functional as F
 from einops import rearrange
 from .utils import split_chessboard, merge_chessboard
 
-def forward(model, input, scales=None, img_sizes=None, max_split_size=None, resize_output_to_idx=0, num_prefix_token=0):
+def forward(model, input, scales=None, img_sizes=None, max_split_size=None, resize_output_to_idx=0, num_prefix_token=0,
+            output_shape='bnc'):
 
-    assert input.dim() == 4, "Input image must be in the shape of BxCxHxW!"
-    assert input.shape[2] == input.shape[3], "Currently only support square images!"
+    assert input.dim() == 4, "Input image must be in the shape of BxCxHxW."
+    assert input.shape[2] == input.shape[3], "Currently only square images are supported."
+    assert output_shape in ['bnc', 'bchw'], "Output shape should be either BxNxC (e.g., ViT) or BxCxHxW (e.g., ConvNet)."
+    assert output_shape == 'bnc' or num_prefix_token == 0, "For ConvNet there shouldn't be any prefix token."
+
     b, c, input_size, _ = input.shape
 
     # image size for each scale
-    assert scales is not None or img_sizes is not None, "Must assign either scales or img_sizes!"
+    assert scales is not None or img_sizes is not None, "Please assign either scales or img_sizes."
     img_sizes = img_sizes or [input_size * scale for scale in scales]
 
     # prepare multiscale inputs
@@ -35,8 +39,9 @@ def forward(model, input, scales=None, img_sizes=None, max_split_size=None, resi
     if num_prefix_token > 0:
         outs_prefix_multiscale = [out[:, :num_prefix_token] for out in outs_multiscale]
         outs_multiscale = [out[:, num_prefix_token:] for out in outs_multiscale]
-    outs_multiscale = [rearrange(out, 'b (h w) c -> b c h w', h=int(out.shape[1] ** 0.5), w=int(out.shape[1] ** 0.5))
-                       for out in outs_multiscale]
+    if output_shape == 'bnc':
+        outs_multiscale = [rearrange(out, 'b (h w) c -> b c h w', h=int(out.shape[1] ** 0.5), w=int(out.shape[1] ** 0.5))
+                           for out in outs_multiscale]
 
     # merge outputs of different splits for each scale separately
     outs_multiscale = [merge_chessboard(out, num_split=num_split) for num_split, out in zip(num_splits, outs_multiscale)]
@@ -46,7 +51,8 @@ def forward(model, input, scales=None, img_sizes=None, max_split_size=None, resi
     out = torch.cat([F.interpolate(outs_multiscale[i].to(torch.float32), size=output_size,
                                    mode='area').to(outs_multiscale[i].dtype)
                      for i in range(len(outs_multiscale))], dim=1)
-    out = rearrange(out, 'b c h w -> b (h w) c')
+    if output_shape == 'bnc':
+        out = rearrange(out, 'b c h w -> b (h w) c')
     if num_prefix_token > 0:
         # take the mean of prefix tokens from different splits for each scale
         outs_prefix_multiscale = [torch.stack(out.split(b, dim=0), dim=0).mean(dim=0) for out in outs_prefix_multiscale]
