@@ -93,11 +93,13 @@ image = Image.open(requests.get(url, stream=True).raw)
 
 inputs = processor(images=image, return_tensors="pt").pixel_values
 
-# wrap the feature extraction process into a single function that takes image tensor as input and outputs feature tensor
+# wrap the feature extraction process into a single function that
+# takes image tensor as input and outputs feature tensor
 def forward_features(inputs):
     return model(inputs).last_hidden_state
 
-# extracting features with scales=[1, 2]. Note the output has one [CLS] token so setting num_prefix_token=1.
+# extracting features with scales=[1, 2]. Note the output has one [CLS] token
+# so setting num_prefix_token=1.
 outputs = multiscale_forward(forward_feature, inputs, scales=[1, 2], num_prefix_token=1)
 print(outputs.shape)  # 1*50*1536
 ```
