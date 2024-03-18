@@ -5,7 +5,7 @@ This repo contains the Pytorch implementation of S<sup>2</sup>-Wrapper, a simple
 Read our paper about when scaling on image scales is better than scaling on model size.
 
 **When Do We Not Need Larger Vision Models?**<br>
-*Baifeng Shi, Ziyang Wu, Maolin Mao, Xin Wang, Trevor Darrell*<br>
+*[Baifeng Shi](https://bfshi.github.io/), [Ziyang Wu](https://robinwu218.github.io/), Maolin Mao, [Xin Wang](https://xinw.ai/), [Trevor Darrell](https://people.eecs.berkeley.edu/~trevor/)*<br>
 UC Berkeley, Microsoft Research<br>
 
 Paper: coming soon
