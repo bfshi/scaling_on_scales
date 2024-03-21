@@ -1,6 +1,6 @@
 # S<sup>2</sup>-Wrapper
 
-This repo contains the Pytorch implementation of S<sup>2</sup>-Wrapper, a simple mechanism that enables multi-scale feature extraction on any vision model.
+This repo contains the Pytorch implementation of S<sup>2</sup>-Wrapper, a simple mechanism that enables multi-scale feature extraction on *any vision model*.
 
 <div align="center">
   <image src="assets/s2_wrapper_2.png" width="840px" />
