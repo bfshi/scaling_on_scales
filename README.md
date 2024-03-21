@@ -2,6 +2,11 @@
 
 This repo contains the Pytorch implementation of S<sup>2</sup>-Wrapper, a simple mechanism that enables multi-scale feature extraction on any vision model.
 
+<div align="center">
+  <image src="assets/s2_wrapper_2.png" width="840px" />
+  <p></p>
+</div>
+
 Read our paper about when scaling on image scales is better than scaling on model size.
 
 **When Do We Not Need Larger Vision Models?**<br>
@@ -9,12 +14,6 @@ Read our paper about when scaling on image scales is better than scaling on mode
 UC Berkeley, Microsoft Research<br>
 
 Paper: [https://arxiv.org/abs/2403.13043](https://arxiv.org/abs/2403.13043)
-
-
-<div align="center">
-  <image src="assets/s2_wrapper_2.png" width="720px" />
-  <p></p>
-</div>
 
 ## Quickstart
 
