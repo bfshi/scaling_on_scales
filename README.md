@@ -8,7 +8,13 @@ Read our paper about when scaling on image scales is better than scaling on mode
 *[Baifeng Shi](https://bfshi.github.io/), [Ziyang Wu](https://robinwu218.github.io/), [Maolin Mao](https://www.linkedin.com/in/maolin-mao-347469220/), [Xin Wang](https://xinw.ai/), [Trevor Darrell](https://people.eecs.berkeley.edu/~trevor/)*<br>
 UC Berkeley, Microsoft Research<br>
 
-Paper: coming soon
+Paper: [https://arxiv.org/abs/2403.13043](https://arxiv.org/abs/2403.13043)
+
+
+<div align="center">
+  <image src="assets/s2_wrapper_2.png" width="720px" />
+  <p></p>
+</div>
 
 ## Quickstart
 
