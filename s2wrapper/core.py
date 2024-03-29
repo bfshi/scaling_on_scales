@@ -23,7 +23,7 @@ def forward(model, input, scales=None, img_sizes=None, max_split_size=None, resi
 
     # image size for each scale
     assert scales is not None or img_sizes is not None, "Please assign either scales or img_sizes."
-    img_sizes = img_sizes or [input_size * scale for scale in scales]
+    img_sizes = img_sizes or [int(input_size * scale) for scale in scales]
 
     # prepare multiscale inputs
     max_split_size = max_split_size or input_size   # The maximum size of each split of image. Set as the input size by default
