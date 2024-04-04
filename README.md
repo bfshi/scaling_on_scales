@@ -49,7 +49,7 @@ from s2wrapper import forward as multiscale_forward
 mutliscale_feature = multiscale_forward(model, x, scales=[1, 2])   # x: 32*3*224*224, feature: 32*196*1536
 ```
 
-If the input is already 448x448, then extract features at scales of 224x224 and 448x448 by
+Above we assume the input is 224x224 and `s2wrapper` will interpolate it into 448x448. **If the original 448x448 image is already available, we can get better performance if we interpolate from the 448x448 image instead of the 224x224 image**. In this case, extract features at scales of 224x224 and 448x448 by
 ```python
 from s2wrapper import forward as multiscale_forward
 mutliscale_feature = multiscale_forward(model, x, scales=[0.5, 1], max_split_size=224)   # x: 32*3*448*448, feature: 32*196*1536, note that we need to set `max_split_size=224` to make it split the 448 image into 4 sub-images.
