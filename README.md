@@ -18,8 +18,8 @@ Paper: [https://arxiv.org/abs/2403.13043](https://arxiv.org/abs/2403.13043)
 
 ## To-Dos
 
-- [] Adding examples of LLaVA w/ S<sup>2</sup>-Wrapper
-- [] Adding support for non-square images
+- [ ] Adding examples of LLaVA w/ S<sup>2</sup>-Wrapper
+- [ ] Adding support for non-square images
 
 
 <!-- ✅ ⬜️  -->
