@@ -15,6 +15,16 @@ UC Berkeley, Microsoft Research<br>
 
 Paper: [https://arxiv.org/abs/2403.13043](https://arxiv.org/abs/2403.13043)
 
+
+## To-Dos
+
+- [] Adding examples of LLaVA w/ S<sup>2</sup>-Wrapper
+- [] Adding support for non-square images
+
+
+<!-- ✅ ⬜️  -->
+
+
 ## Quickstart
 
 **Step 1.** Clone this repo and install `s2wrapper` through pip.
@@ -39,6 +49,13 @@ from s2wrapper import forward as multiscale_forward
 mutliscale_feature = multiscale_forward(model, x, scales=[1, 2])   # x: 32*3*224*224, feature: 32*196*1536
 ```
 
+If the input is already 448*448, then extract features at scales of 224*224 and 448*448 by
+```python
+from s2wrapper import forward as multiscale_forward
+mutliscale_feature = multiscale_forward(model, x, scales=[0.5, 1], max_split_size=224)   # x: 32*3*448*448, feature: 32*196*1536, note that we need to set `max_split_size=224` to make it split the 448 image into 4 sub-images.
+mutliscale_feature = multiscale_forward(model, x, img_sizes=[224, 448], max_split_size=224)   # alternatively, set `img_sizes` instead of `scales`
+```
+
 ## Usage
 
 ```python
@@ -58,7 +75,7 @@ s2wrapper.forward(
 
 `input`: Input image tensor with shape BxCxHxW.
 
-`scales`: A list of scales to extract features on. For example, `scales=[1, 2]` will extract feature on 224<sup>2</sup> and 448<sup>2</sup> scales if default size is 224<sup>2</sup>.
+`scales`: A list of scales to extract features on. For example, `scales=[1, 2]` will extract feature on 224<sup>2</sup> and 448<sup>2</sup> scales if default size is 224<sup>2</sup>. 
 
 `img_sizes`: Alternatively, instead of assigning `scales`, you can assign the image size for each scale. For example, `img_sizes=[224, 448]` will yeild with same results as `scales=[1, 2]` for default size of 224<sup>2</sup>.
 
@@ -114,4 +131,16 @@ def forward_features(inputs):
 # so setting num_prefix_token=1.
 outputs = multiscale_forward(forward_feature, inputs, scales=[1, 2], num_prefix_token=1)
 print(outputs.shape)  # 1*50*1536
+```
+
+
+## Citation
+
+```
+@article{shi2024we,
+  title={When Do We Not Need Larger Vision Models?},
+  author={Shi, Baifeng and Wu, Ziyang and Mao, Maolin and Wang, Xin and Darrell, Trevor},
+  journal={arXiv preprint arXiv:2403.13043},
+  year={2024}
+}
 ```
