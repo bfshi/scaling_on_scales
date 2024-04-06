@@ -27,11 +27,10 @@ Paper: [https://arxiv.org/abs/2403.13043](https://arxiv.org/abs/2403.13043)
 
 ## Quickstart
 
-**Step 1.** Clone this repo and install `s2wrapper` through pip.
+**Step 1.** Install `s2wrapper` through pip.
 
 ```bash
-# go to the directory of this repo, and run 
-pip install .
+pip install git+https://github.com/bfshi/scaling_on_scales.git
 ```
 
 **Step 2.** Extract multi-scale feature on **any vision model** with **one line of code**.
