@@ -30,3 +30,12 @@ def merge_chessboard(x, num_split):
     x_merge = torch.cat([torch.cat([x[(i*num_split + j)*b:(i*num_split + j + 1)*b] for j in range(num_split)], dim=-1)
                          for i in range(num_split)], dim=-2)
     return x_merge
+
+def batched_forward(model, x, batch_size=-1):
+    if batch_size == -1:
+        return model(x)
+    else:
+        x_batched = x.split(batch_size)
+        outs = [model(x) for x in x_batched]
+        return torch.cat(outs, dim=0)
+

@@ -9,7 +9,7 @@ import math
 import torch
 import torch.nn.functional as F
 from einops import rearrange
-from .utils import split_chessboard, merge_chessboard
+from .utils import split_chessboard, merge_chessboard, batched_forward
 
 def forward(model, input, scales=None, img_sizes=None, max_split_size=None, resize_output_to_idx=0, num_prefix_token=0,
             output_shape='bnc'):
@@ -23,7 +23,7 @@ def forward(model, input, scales=None, img_sizes=None, max_split_size=None, resi
 
     # image size for each scale
     assert scales is not None or img_sizes is not None, "Please assign either scales or img_sizes."
-    img_sizes = img_sizes or [input_size * scale for scale in scales]
+    img_sizes = img_sizes or [int(input_size * scale) for scale in scales]
 
     # prepare multiscale inputs
     max_split_size = max_split_size or input_size   # The maximum size of each split of image. Set as the input size by default
@@ -35,7 +35,7 @@ def forward(model, input, scales=None, img_sizes=None, max_split_size=None, resi
         input_multiscale.append(x)
 
     # run feedforward on each scale
-    outs_multiscale = [model(x) for x in input_multiscale]
+    outs_multiscale = [batched_forward(model, x, b) for x in input_multiscale]
     if num_prefix_token > 0:
         outs_prefix_multiscale = [out[:, :num_prefix_token] for out in outs_multiscale]
         outs_multiscale = [out[:, num_prefix_token:] for out in outs_multiscale]
