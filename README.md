@@ -67,6 +67,7 @@ s2wrapper.forward(
     resize_output_to_idx=0,
     num_prefix_token=0,
     output_shape='bnc',
+    split_forward=False,
 )
 ```
 
@@ -85,6 +86,8 @@ s2wrapper.forward(
 `num_prefix_token`: Number of prefix tokens in the feature map. For example, if the feature map returned by `model` contains 1 \[CLS\] token and other spatial tokens, set `num_prefix_token=1`. Default is 0.
 
 `output_shape`: Shape of the output features. Need to be either `bnc` (e.g., ViT) or `bchw` (e.g., ConvNet). Default is `bnc`.
+
+`split_forward`: Whether to run model on each sub-image separately or batch all sub-images into a single run. Setting to `True` can reduce memory usage (roughly the same GPU memory usage as single-scale during inference). Default is `False`.
 
 ## Example:  HuggingFace CLIP with S<sup>2</sup>Wrapper
 
