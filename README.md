@@ -89,6 +89,10 @@ s2wrapper.forward(
 
 `split_forward`: Whether to run model on each sub-image separately or batch all sub-images into a single run. Setting to `True` can reduce memory usage (roughly the same GPU memory usage as single-scale during inference). Default is `False`.
 
+## Example:  LLaVA with S<sup>2</sup>Wrapper
+
+Please see the PR [here](https://github.com/haotian-liu/LLaVA/pull/1376).
+
 ## Example:  HuggingFace CLIP with S<sup>2</sup>Wrapper
 
 Regular feature extraction using HuggingFace CLIP vision model (reference: [official example](https://huggingface.co/docs/transformers/model_doc/clip#transformers.CLIPVisionModel.forward.example)):
