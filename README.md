@@ -20,7 +20,7 @@ Paper: [https://arxiv.org/abs/2403.13043](https://arxiv.org/abs/2403.13043)
 
 - [x] ~~Adding examples of LLaVA w/ S<sup>2</sup>-Wrapper~~ Please see the PR [here](https://github.com/haotian-liu/LLaVA/pull/1376).
 - [ ] Adding pre-trained checkpoints of LLaVA with S<sup>2</sup>-Wrapper.
-- [ ] Adding support for non-square images
+- [x] ~~Adding support for non-square images~~ Now supporting images of any shape. Feature still in test.
 
 
 <!-- ✅ ⬜️  -->
@@ -28,15 +28,18 @@ Paper: [https://arxiv.org/abs/2403.13043](https://arxiv.org/abs/2403.13043)
 
 ## Quickstart
 
-**Step 1.** Install `s2wrapper` through pip.
+**Step 1.** Install `s2wrapper` on this `dev_any_shape` branch through pip.
 
 ```bash
-pip install git+https://github.com/bfshi/scaling_on_scales.git
+git clone https://github.com/bfshi/scaling_on_scales.git
+cd scaling_on_scales
+git checkout dev_any_shape
+pip install .
 ```
 
-**Step 2.** Extract multi-scale feature on **any vision model** with **one line of code**.
+**Step 2.** Extract multi-scale feature on **any vision model** and **images with any shape** with **one line of code**.
 
-Assume you have a function (could be `model`, `model.forward`, _etc._) that takes in BxCxHxW images and outputs BxNxC features.
+Assume you have a function (could be `model`, `model.forward`, _etc._) that can take in square images (BxCxHxW) and outputs BxNxC features.
 
 For example, you have `model` (_e.g._, ViT-B) that extracts feature by
 ```python
@@ -49,12 +52,22 @@ from s2wrapper import forward as multiscale_forward
 mutliscale_feature = multiscale_forward(model, x, scales=[1, 2])   # x: 32*3*224*224, feature: 32*196*1536
 ```
 
+### Use the original high-res images instead
 Above we assume the input is 224x224 and `s2wrapper` will interpolate it into 448x448. **If the original 448x448 image is already available, we can get better performance if we interpolate from the 448x448 image instead of the 224x224 image**. In this case, extract features at scales of 224x224 and 448x448 by
 ```python
 from s2wrapper import forward as multiscale_forward
 mutliscale_feature = multiscale_forward(model, x, scales=[0.5, 1], max_split_size=224)   # x: 32*3*448*448, feature: 32*196*1536, note that we need to set `max_split_size=224` to make it split the 448 image into 4 sub-images.
 # mutliscale_feature = multiscale_forward(model, x, img_sizes=[224, 448], max_split_size=224)   # alternatively, set `img_sizes` instead of `scales`
 ```
+
+### Use images with any shape
+
+If the input image is not square (_e.g._, 112x224), we can still extract multi-scale features on any scales (_e.g._, 112x224 and 224x448 scales) even if your model only accepts square images such as 224x224. 
+```python
+from s2wrapper import forward as multiscale_forward
+multiscale_feature = multiscale_forward(model, x, img_sizes=[(112, 224), (224, 448)], max_split_size=224, split_mode='resize')   # x: 32*3*112*224, feature: 32*98*1536
+```
+How does it work? It will first resize the image (112x224) to the size of each scale (112x224 and 224x448). Then if the shape at any scale cannot be devided by `max_split_size`, it will **resize** the image at that scale to the closest size that can be devided by `max_split_size` (_e.g._, 112x224 will be resized to 224x224 so it can be devided by 224 on both height and width), extract feature at that scale, and then resize the feature map back to the size that corresponds to the original image size. In this case the feature map from 224x224 image will be 14x14, and it will be resized to 7x14 that corresponds to the original image size of 112x224. Alternatively, you can set `split_mode='pad'` to pad the image (and unpad the feature map) instead of resizing.
 
 ## Usage
 
@@ -65,6 +78,7 @@ s2wrapper.forward(
     scales=None,
     img_sizes=None,
     max_split_size=None,
+    split_mode='resize',
     resize_output_to_idx=0,
     num_prefix_token=0,
     output_shape='bnc',
@@ -81,6 +95,8 @@ s2wrapper.forward(
 `img_sizes`: Alternatively, instead of assigning `scales`, you can assign the image size for each scale. For example, `img_sizes=[224, 448]` will yeild with same results as `scales=[1, 2]` for default size of 224<sup>2</sup>.
 
 `max_split_size`: The maximum size of sub-images splitted from the large image. For each scale, the image will be splitted into `ceil(img_size_that_scale / max_split_size)**2` sub-images. If `None`, set by default as the size of `input`.
+
+`split_mode`: How to split the image when the image shape cannot be devided by `max_split_size`. If set to `resize`, it will resize the image to the closest size the can be devided by `max_split_size`, extract the feature, and resize the feature map back to the size that corresponds to the original image size. If set to `pad`, it will pad the image (and unpad the feature map) instead of resizing. Default is `resize`.
 
 `resize_output_to_idx`: Which scale to resize the final feature map to. Default is the first scale in `scales` or `img_sizes`.
 
