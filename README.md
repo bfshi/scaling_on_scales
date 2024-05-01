@@ -20,7 +20,7 @@ Paper: [https://arxiv.org/abs/2403.13043](https://arxiv.org/abs/2403.13043)
 
 - [x] ~~Adding examples of LLaVA w/ S<sup>2</sup>-Wrapper~~ Please see the PR [here](https://github.com/haotian-liu/LLaVA/pull/1376).
 - [ ] Adding pre-trained checkpoints of LLaVA with S<sup>2</sup>-Wrapper.
-- [ ] Adding support for non-square images
+- [x] ~~Adding support for non-square images~~ Now supporting images of any shape. Please check in branch `dev_any_shape`. Feature still in test.
 
 
 <!-- ✅ ⬜️  -->
