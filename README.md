@@ -16,11 +16,17 @@ UC Berkeley, Microsoft Research<br>
 Paper: [https://arxiv.org/abs/2403.13043](https://arxiv.org/abs/2403.13043)
 
 
+## News
+- [2024/05] S<sup>2</sup>-Wrapper is officially integrated in NVIDIA [VILA](https://github.com/Efficient-Large-Model/VILA)! We've released the checkpoint for VILA-1.5-7b with S<sup>2</sup> and more checkpoints are on the way! Check it out [here](#example-nvidia-vila-with-llava-with-s2wrapper).
+- [2024/04] S<sup>2</sup>-Wrapper is officially integrated in [LLaVA](https://github.com/haotian-liu/LLaVA)! We've released the checkpoint for LLaVA-1.5 with S<sup>2</sup>. Try it out [here](#example-llava-with-s2wrapper).
+
+
 ## To-Dos
 
-- [x] ~~Adding examples of LLaVA w/ S<sup>2</sup>-Wrapper~~ Please see the PR [here](https://github.com/haotian-liu/LLaVA/pull/1376).
-- [ ] Adding pre-trained checkpoints of LLaVA with S<sup>2</sup>-Wrapper.
+- [ ] Adding pre-trained checkpoints of LLaVA-NeXT with S<sup>2</sup>-Wrapper.
+- [x] ~~Adding pre-trained checkpoints of LLaVA-1.5 with S<sup>2</sup>-Wrapper.~~
 - [x] ~~Adding support for non-square images~~ Now supporting images of any shape. Please check in branch `dev_any_shape`. Feature still in test.
+- [x] ~~Adding examples of LLaVA w/ S<sup>2</sup>-Wrapper~~ 
 
 
 <!-- ✅ ⬜️  -->
@@ -90,11 +96,50 @@ s2wrapper.forward(
 
 `split_forward`: Whether to run model on each sub-image separately or batch all sub-images into a single run. Setting to `True` can reduce memory usage (roughly the same GPU memory usage as single-scale during inference). Default is `False`.
 
-## Example:  LLaVA with S<sup>2</sup>Wrapper
 
-Please see the PR [here](https://github.com/haotian-liu/LLaVA/pull/1376).
 
-## Example:  HuggingFace CLIP with S<sup>2</sup>Wrapper
+## Example: LLaVA with S<sup>2</sup>-Wrapper
+
+S<sup>2</sup>-Wrapper is officially integrated into [LLaVA](https://github.com/haotian-liu/LLaVA) (see the PR [here](https://github.com/haotian-liu/LLaVA/pull/1376)). To use LLaVA with S<sup>2</sup>-Wrapper, simply install this repo and the latest version of LLaVA repo and download the checkpoints listed below. We've released the checkpoints of LLaVA-1.5-7B and LLaVA-1.5-13B with S<sup>2</sup>-Wrapper.
+
+
+| Model | Size | Schedule | Checkpoint | VQAv2 | VizWiz | TextVQA | MMMU-val | MathVista | MM-Bench | SEED | MM-Vet |
+|----------|----------|-----------|-----------|---|---|---|---|---|---|---|---|
+| LLaVA-1.5 | 7B | full_ft-1e | [liuhaotian/llava-v1.5-7b](https://huggingface.co/liuhaotian/llava-v1.5-7b) | 78.5 | 50.0 | 58.2 | 36.2 | 25.2 | 64.3 | 65.7 | 31.1 |
+| LLaVA-1.5 | 7B | lora-1e | [liuhaotian/llava-v1.5-7b-lora](https://huggingface.co/liuhaotian/llava-v1.5-7b-lora) | 79.1 | 47.8 | 58.2 | - | - | 66.1 | - | 30.2 |
+| **LLaVA-1.5-S2** | 7B | lora-1e | [bfshi/llava-v1.5-7b-s2-lora](https://huggingface.co/bfshi/llava-v1.5-7b-s2-lora) | **80.0** | **50.1** | **61.0** | **37.7** | **25.3** | **66.2** | **67.9** | **32.4** |
+| LLaVA-1.5 | 13B | full_ft-1e | [liuhaotian/llava-v1.5-13b](https://huggingface.co/liuhaotian/llava-v1.5-13b) | 80.0 | 53.6 | 61.3 | 36.4 | 27.6 | 67.7 | 68.2 | 36.1 |
+| LLaVA-1.5 | 13B | lora-1e | [liuhaotian/llava-v1.5-13b-lora](https://huggingface.co/liuhaotian/llava-v1.5-13b-lora) | 80.0 | 58.9 | 60.2 | - | - | 68.5 | - | 38.3 |
+| **LLaVA-1.5-S2** | 13B | lora-1e | [bfshi/llava-v1.5-13b-s2-lora](https://huggingface.co/bfshi/llava-v1.5-13b-s2-lora) | **80.9** | 56.0 | **63.1** | **37.4** | **27.8** | 67.9 | **68.9** | 36.4 |
+
+
+**Training**. To train LLaVA with S<sup>2</sup>-Wrapper, since the current LLaVA repo only supports evaluation with S<sup>2</sup>, please additionally apply the changes [here](https://github.com/bfshi/LLaVA_NeXT_S2_Integration/commit/f73528e265c54e871289f08533d08d72ad8fdfe8)
+to your LLaVA repo and you are good to go! 
+
+Training configurations should be the same as training a regular LLaVA **without** anyres (*i.e.*, `image_aspect_ratio="resize"` and `mm_patch_merge_type="flat"`), except for two new model configs:
+- `s2=True`. This turns on the usage of S<sup>2</sup>.
+- `s2_scales="336,672,1008"`. This specifies the image scales S<sup>2</sup> will extract features on.
+
+
+
+## Example: NVIDIA VILA with S<sup>2</sup>-Wrapper
+
+S<sup>2</sup>-Wrapper is officially integrated into NVIDIA [VILA](https://github.com/Efficient-Large-Model/VILA). VILA is a multi-modal LLM that supports multi-image understanding and video understanding
+with superb results on multiple benchmarks (*e.g.*, ranked #1 on [MMMU](https://mmmu-benchmark.github.io/#leaderboard) among all open-source models). VILA comes with several model sizes: 3B, 8B, 13B, and 40B, each also with a quantized version (AWQ). 
+
+Currently we've released the checkpoints of VILA-3B with S<sup>2</sup>-Wrapper which is your to-go choice for running MLLM on edge devices. Checkpoints of other model sizes are on the way! Meanwhile, welcome to check out more details [here](https://developer.nvidia.com/blog/visual-language-intelligence-and-edge-ai-2-0/).
+
+| $~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~$ | Prec. | VQAv2 | GQA  | VizWiz | SQA-I | VQA-T | POPE | MME     | MMB  | MMB-CN | SEED | SEED-I | MMMU (val) | MMMU (test) | llava-bench | MM-Vet | Average |
+| -------------------------------- | ----- | ----- | ---- | ------ | ----- | ----- | ---- | ------- | ---- | ------ | ---- | ------ | ---------- | ----------- | ----------- | ------ | ------- |
+| VILA1.5-3B                       | fp16  | 80.4  | 61.5 | 53.5   | 69.0  | 60.4  | 85.9 | 1442.44 | 63.4 | 52.7   | 60.9 | 67.9   | 33.3       | 30.8        | 75.9        | 35.4   | 60.2    |
+| **VILA1.5-3B-S2**                | fp16  | 79.8  | 61.4 | 61.3   | 69.6  | 63.4  | 85.3 | 1431.65 | 62.8 | 52.2   | 60.0 | 66.4   | 32.8       | 31.3        | 76.7        | 38.6   | 60.9    |
+| VILA1.5-3B-AWQ                   | int4  | 80.0  | 61.1 | 53.8   | 67.8  | 60.4  | 85.9 | 1437.34 | 63.3 | 51.4   | 59.8 | 66.6   | 32.7       | 31.1        | 75.0        | 37.3   | 59.9    |
+| **VILA1.5-3B-S2-AWQ**            | int4  | 79.4  | 61.3 | 62.3   | 69.2  | 63.0  | 85.8 | 1417.06 | 61.6 | 51.5   | 59.1 | 65.7   | 33.4       | 30.4        | 77.1        | 36.7   | 60.5    |
+
+Please refer to the [original repo](https://github.com/Efficient-Large-Model/VILA) of VILA for checkpoints as well as guidance on training, evaluation, and deployment.
+
+
+## Example:  HuggingFace CLIP with S<sup>2</sup>-Wrapper
 
 Regular feature extraction using HuggingFace CLIP vision model (reference: [official example](https://huggingface.co/docs/transformers/model_doc/clip#transformers.CLIPVisionModel.forward.example)):
 ```python
