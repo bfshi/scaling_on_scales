@@ -17,6 +17,7 @@ Paper: [https://arxiv.org/abs/2403.13043](https://arxiv.org/abs/2403.13043)
 
 
 ## News
+- [2024/07] Accepted to ECCV 2024!
 - [2024/05] S<sup>2</sup>-Wrapper is officially integrated in NVIDIA [VILA](https://github.com/Efficient-Large-Model/VILA)! We've released the checkpoint for VILA-1.5-3b with S<sup>2</sup> and more checkpoints are on the way! Check it out [here](#example-nvidia-vila-with-s2-wrapper).
 - [2024/04] S<sup>2</sup>-Wrapper is officially integrated in [LLaVA](https://github.com/haotian-liu/LLaVA)! We've released the checkpoint for LLaVA-1.5 with S<sup>2</sup>. Try it out [here](#example-llava-with-s2-wrapper).
 
