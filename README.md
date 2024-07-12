@@ -113,6 +113,15 @@ S<sup>2</sup>-Wrapper is officially integrated into [LLaVA](https://github.com/h
 | LLaVA-1.5 | 13B | lora-1e | [liuhaotian/llava-v1.5-13b-lora](https://huggingface.co/liuhaotian/llava-v1.5-13b-lora) | 80.0 | 58.9 | 60.2 | - | - | 68.5 | - | 38.3 |
 | **LLaVA-1.5-S2** | 13B | lora-1e | [bfshi/llava-v1.5-13b-s2-lora](https://huggingface.co/bfshi/llava-v1.5-13b-s2-lora) | **80.9** | 56.0 | **63.1** | **37.4** | **27.8** | 67.9 | **68.9** | 36.4 |
 
+An example script of model inference with LLaVA-1.5-S2:
+```bash
+python3 -m llava.eval.run_llava \
+    --model-path bfshi/llava-v1.5-7b-s2-lora \
+    --model-base lmsys/vicuna-7b-v1.5 \
+    --image-file <image> \
+    --query <query> \
+    --conv-mode vicuna_v1
+```
 
 **Training**. To train LLaVA with S<sup>2</sup>-Wrapper, since the current LLaVA repo only supports evaluation with S<sup>2</sup>, please additionally apply the changes [here](https://github.com/bfshi/LLaVA_NeXT_S2_Integration/commit/f73528e265c54e871289f08533d08d72ad8fdfe8)
 to your LLaVA repo and you are good to go! 
