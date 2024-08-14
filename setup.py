@@ -8,10 +8,10 @@ setup(
     version='0.1',
     author='Baifeng Shi, Ziyang Wu, Maolin Mao, Xin Wang, Trevor Darrell',
     author_email='baifeng_shi@berkeley.edu',
-    description='Pytorch implementation of S2Wrapper, a simple mechanism to extract multi-scale features using any vision model. Please refer to paper:',
+    description='Pytorch implementation of S2Wrapper, a simple mechanism to extract multi-scale features using any vision model. Please refer to paper: When Do We Not Need Larger Vision Models? (https://arxiv.org/pdf/2403.13043.pdf)',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/bfshi/s2',
+    url='https://github.com/bfshi/scaling_on_scales',
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
