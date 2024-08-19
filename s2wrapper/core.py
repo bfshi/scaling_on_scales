@@ -62,9 +62,7 @@ def forward(model, input, scales=None, img_sizes=None, max_split_size=None, spli
     # resize or unpad the output features to approximately the original size
     original_feature_sizes = [(math.ceil(original_img_size[0] / img_size[0] * feature_size[0]), math.ceil(original_img_size[1] / img_size[1] * feature_size[1]))
                               for original_img_size, img_size, feature_size in zip(original_img_sizes, img_sizes, [out.shape[-2:] for out in outs_multiscale])]
-    if split_mode == 'resize':
-        outs_multiscale = [F.interpolate(out.to(torch.float32), size=original_size, mode='area').to(out.dtype) for original_size, out in zip(original_feature_sizes, outs_multiscale)]
-    elif split_mode == 'pad':
+    if split_mode == 'pad':
         outs_multiscale = [out[:, :, :original_size[0], :original_size[1]] for original_size, out in zip(original_feature_sizes, outs_multiscale)]
 
     # interpolate outputs from different scales and concat together
