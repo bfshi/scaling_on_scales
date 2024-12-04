@@ -6,6 +6,7 @@
 #  ------------------------------------------------------------------------------------------
 
 import torch
+from einops import rearrange
 
 def split_chessboard(x, num_split):
     """
@@ -14,8 +15,7 @@ def split_chessboard(x, num_split):
     """
     B, C, H, W = x.shape
     assert H % num_split == 0 and W % num_split == 0
-    h, w = H // num_split, W // num_split
-    x_split = torch.cat([x[:, :, i*h:(i+1)*h, j*w:(j+1)*w] for i in range(num_split) for j in range(num_split)], dim=0)
+    x_split = rearrange(x, 'b c (nh h) (nw w) -> (nh nw b) c h w', nh=num_split, nw=num_split)
     return x_split
 
 def merge_chessboard(x, num_split):
@@ -26,9 +26,8 @@ def merge_chessboard(x, num_split):
     """
     B, C, H, W = x.shape
     assert B % (num_split**2) == 0
-    b = B // (num_split**2)
-    x_merge = torch.cat([torch.cat([x[(i*num_split + j)*b:(i*num_split + j + 1)*b] for j in range(num_split)], dim=-1)
-                         for i in range(num_split)], dim=-2)
+    x_merge = rearrange(x, '(nh nw b) c h w -> b c (nh h) (nw w)', nh=num_split, nw=num_split)
+    
     return x_merge
 
 def batched_forward(model, x, batch_size=-1):
