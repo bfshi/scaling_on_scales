@@ -15,8 +15,7 @@ def split_chessboard(x, num_split):
     """
     B, C, H, W = x.shape
     assert H % num_split == 0 and W % num_split == 0
-    num_h, num_w = H // num_split, W // num_split
-    x_split = rearrange(x, 'b c (nh h) (nw w) -> (nh nw b) c h w', nh=num_h, nw=num_w)
+    x_split = rearrange(x, 'b c (nh h) (nw w) -> (nh nw b) c h w', nh=num_split, nw=num_split)
     return x_split
 
 def merge_chessboard(x, num_split):
