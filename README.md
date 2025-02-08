@@ -18,6 +18,7 @@ Paper: [https://arxiv.org/abs/2403.13043](https://arxiv.org/abs/2403.13043)
 
 ## News
 - [2025/02] [NVILA](https://nvlabs.github.io/VILA/) uses Dynamic-S<sup>2</sup>, a new version of S<sup>2</sup>-Wrapper that supports dynamic aspect ratio, as one of its key ingredients. NVILA is a frontier MLLM that achieves superior performance over SOTA MLLMs such as Qwen2-VL across multiple benchmarks while being much faster (1.9x - 5.1x faster in training and 1.2x - 2.8x faster during inference).
+
 <div align="center">
   <image src="assets/nvila_teaser.jpg" width="840px" />
   <p></p>
@@ -26,6 +27,7 @@ Paper: [https://arxiv.org/abs/2403.13043](https://arxiv.org/abs/2403.13043)
   <image src="assets/nvila_performance.png" width="840px" />
   <p></p>
 </div>
+
 - [2024/07] Accepted to ECCV 2024!
 - [2024/05] S<sup>2</sup>-Wrapper is officially integrated in NVIDIA [VILA](https://github.com/Efficient-Large-Model/VILA)! We've released the checkpoint for VILA-1.5-3b with S<sup>2</sup> and more checkpoints are on the way! Check it out [here](#example-nvidia-vila-with-s2-wrapper).
 - [2024/04] S<sup>2</sup>-Wrapper is officially integrated in [LLaVA](https://github.com/haotian-liu/LLaVA)! We've released the checkpoint for LLaVA-1.5 with S<sup>2</sup>. Try it out [here](#example-llava-with-s2-wrapper).
