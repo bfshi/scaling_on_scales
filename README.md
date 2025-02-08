@@ -200,7 +200,7 @@ def forward_features(inputs):
 
 # extracting features with scales=[1, 2]. Note the output has one [CLS] token
 # so setting num_prefix_token=1.
-outputs = multiscale_forward(forward_feature, inputs, scales=[1, 2], num_prefix_token=1)
+outputs = multiscale_forward(forward_features, inputs, scales=[1, 2], num_prefix_token=1)
 print(outputs.shape)  # 1*50*1536
 ```
 
